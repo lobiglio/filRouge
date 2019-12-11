@@ -17,9 +17,34 @@ app.get('/tasks', (req, res) => {
   });
 });
 
-// écoute de l'url "/tasks/light"
+// Récupération de certaines données des taches"
 app.get('/tasks/light', (req, res) => {
   connection.query('SELECT title, is_done, days from tasks', (err, results) => {
+    if (err) {
+      res.status(500).send('Erreur lors de la récupération des champs');
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Récupération des taches filtrees par titre commençant par faire"
+app.get('/tasks/filter1', (req, res) => {
+  connection.query(
+    'SELECT * from tasks WHERE title LIKE "faire%"',
+    (err, results) => {
+      if (err) {
+        res.status(500).send('Erreur lors de la récupération des champs');
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+// Récupération des taches supérieures à 3 jours"
+app.get('/tasks/filter2', (req, res) => {
+  connection.query('SELECT * from tasks WHERE days>3', (err, results) => {
     if (err) {
       res.status(500).send('Erreur lors de la récupération des champs');
     } else {
