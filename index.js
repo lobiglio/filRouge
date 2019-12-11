@@ -123,6 +123,19 @@ app.put('/tasks/toggle/:id', (req, res) => {
   );
 });
 
+// Suppression d'une entité
+app.delete('/tasks/:id', (req, res) => {
+  const idTask = req.params.id;
+  connection.query('DELETE FROM tasks WHERE id = ?', [idTask], (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Erreur lors de la suppression de la tâche');
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 app.listen(port, (err) => {
   if (err) {
     throw new Error('Something bad happened...');
