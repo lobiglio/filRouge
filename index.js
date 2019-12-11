@@ -2,6 +2,15 @@ const express = require('express');
 const connection = require('./conf');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
+// Support JSON-encoded bodies
+app.use(bodyParser.json());
+// Support URL-encoded bodies
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 
 // écoute de l'url "/tasks"
 app.get('/tasks', (req, res) => {
@@ -62,6 +71,56 @@ app.get('/tasks/order', (req, res) => {
       res.json(results);
     }
   });
+});
+
+// écoute de l'url "/api/tasks" avec le verbe POST
+app.post('/tasks', (req, res) => {
+  // récupération des données envoyées
+  const formData = req.body;
+  // connexion à la base de données, et insertion de la tache
+  connection.query('INSERT INTO tasks SET ?', formData, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Erreur lors de la sauvegarde de la tache');
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+// Modification d'une entité
+app.put('/tasks/:id', (req, res) => {
+  const idTask = req.params.id;
+  const formData = req.body;
+  connection.query(
+    'UPDATE tasks SET ? WHERE id = ?',
+    [formData, idTask],
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Erreur lors de la modification de la tâche');
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
+});
+
+// Modification du booléen d'une entité
+app.put('/tasks/toggle/:id', (req, res) => {
+  const idTask = req.params.id;
+  connection.query(
+    'UPDATE tasks SET is_done = !is_done WHERE id = ?',
+    idTask,
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Erreur lors de la modification de la tâche');
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
 });
 
 app.listen(port, (err) => {
