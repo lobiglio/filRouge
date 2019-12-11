@@ -136,6 +136,18 @@ app.delete('/tasks/:id', (req, res) => {
   });
 });
 
+// Suppression de toutes les entités dont le booleen est true
+app.delete('/tasks/done', (req, res) => {
+  connection.query('DELETE FROM tasks WHERE is_done', (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Erreur lors de la suppression de la tâche');
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 app.listen(port, (err) => {
   if (err) {
     throw new Error('Something bad happened...');
