@@ -53,6 +53,17 @@ app.get('/tasks/filter2', (req, res) => {
   });
 });
 
+// Récupération des taches ordonnées"
+app.get('/tasks/order', (req, res) => {
+  connection.query('SELECT * from tasks ORDER BY days DESC', (err, results) => {
+    if (err) {
+      res.status(500).send('Erreur lors de la récupération des champs');
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 app.listen(port, (err) => {
   if (err) {
     throw new Error('Something bad happened...');
